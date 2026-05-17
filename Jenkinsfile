@@ -1,8 +1,11 @@
-FROM jenkins/jenkins:lts
+pipeline {
+    agent any
 
-USER root
-
-RUN apt update && \
-    apt install -y nodejs npm docker.io kubectl
-
-USER jenkins
+    stages {
+        stage('Test') {
+            steps {
+                echo 'Pipeline is working'
+            }
+        }
+    }
+}
