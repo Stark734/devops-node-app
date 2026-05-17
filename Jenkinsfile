@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     stages {
-        stage('Test') {
+        stage('TEST PIPELINE') {
             steps {
-                echo 'Pipeline stable'
+                echo 'PIPELINE IS RUNNING SUCCESSFULLY'
             }
         }
     }
