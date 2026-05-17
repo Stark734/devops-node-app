@@ -3,28 +3,15 @@ pipeline {
 
     stages {
 
-        stage('Checkout Code') {
+        stage('Checkout') {
             steps {
-                git 'https://github.com/YOUR_REPO/devops-node-app.git'
+                checkout scm
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Test Stage') {
             steps {
-                sh 'docker build -t devops-node-app:v1 .'
-            }
-        }
-
-        stage('Deploy to Kubernetes') {
-            steps {
-                sh 'kubectl apply -f deployment.yaml'
-                sh 'kubectl apply -f service.yaml'
-            }
-        }
-
-        stage('Restart Deployment') {
-            steps {
-                sh 'kubectl rollout restart deployment devops-node-app'
+                echo "Pipeline is running correctly 🚀"
             }
         }
     }
