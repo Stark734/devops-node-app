@@ -5,7 +5,6 @@ pipeline {
         IMAGE_NAME = "devops-node-app"
         IMAGE_TAG = "v1"
         CONTAINER_NAME = "devops-app"
-        DEPLOYMENT_NAME = "devops-node-app"
     }
 
     stages {
@@ -18,39 +17,34 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'npm install'
+                bat 'npm install'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
+                bat 'docker build -t devops-node-app:v1 .'
             }
         }
 
-        stage('Run Container (Local Test)') {
+        stage('Run Docker Container') {
             steps {
-                sh "docker rm -f ${CONTAINER_NAME} || true"
-                sh "docker run -d -p 3000:3000 --name ${CONTAINER_NAME} ${IMAGE_NAME}:${IMAGE_TAG}"
+                bat 'docker rm -f devops-app || exit 0'
+                bat 'docker run -d -p 3000:3000 --name devops-app devops-node-app:v1'
             }
         }
 
-        stage('Deploy to Kubernetes') {
+        stage('Kubernetes Deploy') {
             steps {
-                sh "kubectl apply -f deployment.yaml"
-                sh "kubectl apply -f service.yaml"
-            }
-        }
-
-        stage('Restart Kubernetes Deployment') {
-            steps {
-                sh "kubectl rollout restart deployment ${DEPLOYMENT_NAME}"
+                bat 'kubectl apply -f deployment.yaml'
+                bat 'kubectl apply -f service.yaml'
+                bat 'kubectl rollout restart deployment --all'
             }
         }
 
         stage('Verify Pods') {
             steps {
-                sh "kubectl get pods"
+                bat 'kubectl get pods'
             }
         }
     }
@@ -59,9 +53,8 @@ pipeline {
         success {
             echo "🚀 FULL CI/CD PIPELINE SUCCESS"
         }
-
         failure {
-            echo "❌ Pipeline Failed — check logs"
+            echo "❌ Pipeline Failed"
         }
     }
 }
