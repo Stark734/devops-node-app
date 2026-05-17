@@ -17,34 +17,34 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                bat 'npm install'
+                sh 'npm install'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                bat 'docker build -t devops-node-app:v1 .'
+                sh 'docker build -t devops-node-app:v1 .'
             }
         }
 
         stage('Run Docker Container') {
             steps {
-                bat 'docker rm -f devops-app || exit 0'
-                bat 'docker run -d -p 3000:3000 --name devops-app devops-node-app:v1'
+                sh 'docker rm -f devops-app || true'
+                sh 'docker run -d -p 3000:3000 --name devops-app devops-node-app:v1'
             }
         }
 
         stage('Kubernetes Deploy') {
             steps {
-                bat 'kubectl apply -f deployment.yaml'
-                bat 'kubectl apply -f service.yaml'
-                bat 'kubectl rollout restart deployment --all'
+                sh 'kubectl apply -f deployment.yaml'
+                sh 'kubectl apply -f service.yaml'
+                sh 'kubectl rollout restart deployment devops-node-app'
             }
         }
 
         stage('Verify Pods') {
             steps {
-                bat 'kubectl get pods'
+                sh 'kubectl get pods'
             }
         }
     }
